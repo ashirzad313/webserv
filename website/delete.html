@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Resource</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+        .container{
+            --max-width: 1000px;
+            --padding: 1rem;
+
+            width: min(var(--max-width), 100% - (var(--padding) * 1.2));
+            margin-inline: auto;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f0f0;
+        }
+        div {
+            font-size: 1.5rem;
+            font-weight: semibold;
+            color: #333;
+            text-align: center;
+        }
+        .button{
+            border: none;
+            padding: 1rem 3rem;
+            background-color: #333;
+            border-radius: 15px;
+            font-weight: semibold;
+            color: #f0f0f0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Delete a Resource</h2>
+        <form id="deleteForm">
+            <label for="file">Select a file to delete:</label>
+            <select id="file" name="file">
+                <option value="file.txt">file.txt</option>
+                <option value="a b.png">a b.png</option>
+            </select>
+            <br><br>
+            <button type="button" class="button" onclick="deleteResource()">Delete</button>
+        </form>
+        <p id="responseMessage"></p>
+    </div>
+
+    <script>
+        function deleteResource() {
+            const resource = document.getElementById('file').value;
+
+            fetch('./cgi-bin/delete.py?file=' + encodeURIComponent(resource), {
+                method: 'DELETE',
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (/4\d\d/.test(data)) {
+                    document.open();
+                    document.write(data);
+                    document.close();
+                    return;
+                }
+				document.getElementById('responseMessage').innerText = data;
+            })
+        }
+    </script>
+</body>
+</html>
